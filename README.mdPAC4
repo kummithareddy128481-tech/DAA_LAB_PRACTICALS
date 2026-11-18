@@ -1,9 +1,0 @@
-##Summary
-
-Iterative and Recursive approaches are two common methods used to solve programming problems. An iterative approach uses loops such as for and while to repeat a set of instructions until a condition is satisfied. It generally uses less memory and is suitable for problems involving repeated operations.
-
-A recursive approach solves a problem by making a function call itself with a smaller or simpler input until it reaches a base case. Recursion is useful for problems such as tree traversal, factorial calculation, Fibonacci series, and divide-and-conquer algorithms.
-
-##Conclusion
-
-Both iterative and recursive approaches can be used to solve the same problem, but their suitability depends on the situation. Iteration is usually more memory-efficient, while recursion can make complex problems simpler and easier to understand. However, recursion requires additional memory for function calls and must have a proper base case to avoid infinite recursion. Therefore, the choice between iteration and recursion depends on problem complexity, readability, performance, and memory requirements.
