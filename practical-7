@@ -1,0 +1,103 @@
+#include <iostream>
+#include <chrono>
+using namespace std;
+
+int main()
+{
+    int coins[4] = {1, 5, 6, 9};
+    int amount;
+
+    cout << "Enter amount: ";
+    cin >> amount;
+
+    // Start measuring execution time
+    auto start = chrono::high_resolution_clock::now();
+
+    // dp[i][j] = minimum number of coins required
+    // to make amount j using first i coin types
+    int dp[5][amount + 1];
+
+    // Initialize
+    for (int j = 0; j <= amount; j++)
+        dp[0][j] = 9999;
+
+    for (int i = 0; i <= 4; i++)
+        dp[i][0] = 0;
+
+    // Fill 2D array
+    for (int i = 1; i <= 4; i++)
+    {
+        for (int j = 1; j <= amount; j++)
+        {
+            // Do not use current coin
+            dp[i][j] = dp[i - 1][j];
+
+            // Use current coin
+            if (coins[i - 1] <= j)
+            {
+                int value = 1 + dp[i][j - coins[i - 1]];
+
+                if (value < dp[i][j])
+                    dp[i][j] = value;
+            }
+        }
+    }
+
+    cout << "\nMinimum number of coins = "
+         << dp[4][amount] << endl;
+
+    // Store number of each coin used
+    int count[4] = {0, 0, 0, 0};
+
+    int i = 4;
+    int j = amount;
+
+    // Find selected coins
+    while (j > 0 && i > 0)
+    {
+        if (dp[i][j] == dp[i - 1][j])
+        {
+            // Current coin was not used
+            i--;
+        }
+        else
+        {
+            // Current coin was used
+            count[i - 1]++;
+            j = j - coins[i - 1];
+        }
+    }
+
+    cout << "\nCoins used:\n";
+
+    for (int k = 0; k < 4; k++)
+    {
+        cout << "Coin " << coins[k]
+             << " : " << count[k] << " coin(s)" << endl;
+    }
+
+    cout << "\nSolution: ";
+
+    for (int k = 0; k < 4; k++)
+    {
+        if (count[k] > 0)
+        {
+            cout << count[k] << " x " << coins[k] << " ";
+        }
+    }
+
+    cout << "\n";
+
+    // Stop measuring execution time
+    auto end = chrono::high_resolution_clock::now();
+
+    // Calculate execution time
+    chrono::duration<double, milli> executionTime = end - start;
+
+    // Display execution time
+    cout << "\nExecution Time: "
+         << executionTime.count()
+         << " milliseconds" << endl;
+
+    return 0;
+}
