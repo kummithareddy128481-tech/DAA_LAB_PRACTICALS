@@ -1,0 +1,118 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <chrono>
+using namespace std;
+
+struct Edge {
+    int u, v, weight;
+};
+
+bool compare(Edge a, Edge b) {
+    return a.weight < b.weight;
+}
+
+vector<int> parent, rankArr;
+
+int findParent(int x) {
+    if (parent[x] != x)
+        parent[x] = findParent(parent[x]);
+    return parent[x];
+}
+
+void unite(int u, int v) {
+    u = findParent(u);
+    v = findParent(v);
+
+    if (u == v)
+        return;
+
+    if (rankArr[u] < rankArr[v])
+        parent[u] = v;
+    else if (rankArr[u] > rankArr[v])
+        parent[v] = u;
+    else {
+        parent[v] = u;
+        rankArr[u]++;
+    }
+}
+
+int main() {
+    int n, m;
+
+    cout << "Enter number of vertices and edges: ";
+    cin >> n >> m;
+
+    if (n <= 0 || m < 0) {
+        cout << "Invalid input!\n";
+        return 0;
+    }
+
+    vector<Edge> edges(m);
+
+    cout << "Enter edges (u v weight), vertices numbered 0 to "
+         << n - 1 << ":\n";
+
+    for (int i = 0; i < m; i++) {
+        cin >> edges[i].u >> edges[i].v >> edges[i].weight;
+
+        if (edges[i].u < 0 || edges[i].u >= n ||
+            edges[i].v < 0 || edges[i].v >= n) {
+            cout << "Invalid vertex number!\n";
+            return 0;
+        }
+    }
+
+    // Initialize Disjoint Set
+    parent.resize(n);
+    rankArr.assign(n, 0);
+
+    for (int i = 0; i < n; i++)
+        parent[i] = i;
+
+    int totalCost = 0;
+    int count = 0;
+
+    cout << "\nEdges in Minimum Spanning Tree:\n";
+
+    // Start measuring execution time
+    auto start = chrono::high_resolution_clock::now();
+
+    // Sort edges by weight
+    sort(edges.begin(), edges.end(), compare);
+
+    // Kruskal's Algorithm
+    for (Edge e : edges) {
+        if (findParent(e.u) != findParent(e.v)) {
+            unite(e.u, e.v);
+
+            cout << e.u << " - " << e.v
+                 << " : " << e.weight << '\n';
+
+            totalCost += e.weight;
+            count++;
+
+            if (count == n - 1)
+                break;
+        }
+    }
+
+    // Stop measuring execution time
+    auto end = chrono::high_resolution_clock::now();
+
+    // Calculate execution time
+    chrono::duration<double, milli> executionTime = end - start;
+
+    if (count != n - 1) {
+        cout << "Graph is disconnected; MST does not exist.\n";
+    } else {
+        cout << "Total MST cost: " << totalCost << '\n';
+    }
+
+    // Display execution time
+    cout << "Execution Time: "
+         << executionTime.count()
+         << " milliseconds\n";
+
+    return 0;
+}
